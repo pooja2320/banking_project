@@ -30,7 +30,7 @@ export const createTransaction = async (transaction: CreateTransactionProps) => 
   }
 }
 
-export const getTransactionsByBankId = async ({bankId}: getTransactionsByBankIdProps) => {
+export const getTransactionsByBankId = async ({ bankId }: getTransactionsByBankIdProps) => {
   try {
     const { database } = await createAdminClient();
 
@@ -49,7 +49,7 @@ export const getTransactionsByBankId = async ({bankId}: getTransactionsByBankIdP
     const transactions = {
       total: senderTransactions.total + receiverTransactions.total,
       documents: [
-        ...senderTransactions.documents, 
+        ...senderTransactions.documents,
         ...receiverTransactions.documents,
       ]
     }

@@ -4,11 +4,15 @@ import TransactionsTable from '@/components/TransactionsTable';
 import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
 import { formatAmount } from '@/lib/utils';
+import { redirect } from 'next/navigation';
 import React from 'react'
 
 const TransactionHistory = async ({ searchParams: { id, page }}:SearchParamProps) => {
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
+
+  if(!loggedIn) redirect('/sign-in');
+
   const accounts = await getAccounts({ 
     userId: loggedIn.$id 
   })
@@ -20,16 +24,17 @@ const TransactionHistory = async ({ searchParams: { id, page }}:SearchParamProps
 
   const account = await getAccount({ appwriteItemId })
 
+  if(!account) return;
 
 const rowsPerPage = 10;
-const totalPages = Math.ceil(account?.transactions.length / rowsPerPage);
+const totalPages = Math.ceil((account?.transactions?.length || 0) / rowsPerPage);
 
 const indexOfLastTransaction = currentPage * rowsPerPage;
 const indexOfFirstTransaction = indexOfLastTransaction - rowsPerPage;
 
-const currentTransactions = account?.transactions.slice(
+const currentTransactions = account?.transactions?.slice(
   indexOfFirstTransaction, indexOfLastTransaction
-)
+) || []
   return (
     <div className="transactions">
       <div className="transactions-header">

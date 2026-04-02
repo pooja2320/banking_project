@@ -16,15 +16,15 @@ const CategoryBadge = ({ category }: CategoryBadgeProps) => {
     backgroundColor,
     textColor,
     chipBackgroundColor,
-   } = transactionCategoryStyles[category as keyof typeof transactionCategoryStyles] || transactionCategoryStyles.default
-   
+  } = transactionCategoryStyles[category as keyof typeof transactionCategoryStyles] || transactionCategoryStyles.default
+
   return (
     <div className={cn('category-badge', borderColor, chipBackgroundColor)}>
       <div className={cn('size-2 rounded-full', backgroundColor)} />
       <p className={cn('text-[12px] font-medium', textColor)}>{category}</p>
     </div>
   )
-} 
+}
 
 const TransactionsTable = ({ transactions }: TransactionTableProps) => {
   return (
@@ -57,28 +57,27 @@ const TransactionsTable = ({ transactions }: TransactionTableProps) => {
                 </div>
               </TableCell>
 
-              <TableCell className={`pl-2 pr-10 font-semibold ${
-                isDebit || amount[0] === '-' ?
+              <TableCell className={`pl-2 pr-10 font-semibold ${isDebit || amount[0] === '-' ?
                   'text-[#f04438]'
                   : 'text-[#039855]'
-              }`}>
+                }`}>
                 {isDebit ? `-${amount}` : isCredit ? amount : amount}
               </TableCell>
 
               <TableCell className="pl-2 pr-10">
-                <CategoryBadge category={status} /> 
+                <CategoryBadge category={status} />
               </TableCell>
 
               <TableCell className="min-w-32 pl-2 pr-10">
                 {formatDateTime(new Date(t.date)).dateTime}
               </TableCell>
 
-              <TableCell className="pl-2 pr-10 capitalize min-w-24">
-               {t.paymentChannel}
+              <TableCell className="pl-2 pr-10 capitalize min-w-24 max-md:hidden">
+                {t.paymentChannel}
               </TableCell>
 
               <TableCell className="pl-2 pr-10 max-md:hidden">
-               <CategoryBadge category={t.category} /> 
+                <CategoryBadge category={t.category} />
               </TableCell>
             </TableRow>
           )

@@ -1,0 +1,18 @@
+[
+  {
+    "type": "plaid_error",
+    "error": {
+      "display_message": null,
+      "documentation_url": "https://plaid.com/docs/?ref=error#invalid-input-errors",
+      "error_code": "ADDITIONAL_CONSENT_REQUIRED",
+      "error_message": "client does not have user consent to access the PRODUCT_TRANSACTIONS product",
+      "error_type": "INVALID_INPUT",
+      "request_id": "gVJd1M9AjkeINz9",
+      "suggested_action": null
+    }
+  },
+  {
+    "type": "appwrite_error",
+    "error": "Invalid `collectionId` param: UID must contain at most 36 chars. Valid chars are a-z, A-Z, 0-9, and underscore. Can't start with a leading underscore"
+  }
+]

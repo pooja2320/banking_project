@@ -80,7 +80,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       bankId: bank.$id,
     });
 
-    const transferTransactions = transferTransactionsData.documents.map(
+    const transferTransactions = transferTransactionsData?.documents?.map(
       (transferData: Transaction) => ({
         id: transferData.$id,
         name: transferData.name!,
@@ -90,7 +90,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
         category: transferData.category,
         type: transferData.senderBankId === bank.$id ? "debit" : "credit",
       })
-    );
+    ) || [];
 
     // get institution info from plaid
     const institution = await getInstitution({
@@ -115,7 +115,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     };
 
     // sort transactions by date such that the most recent transaction is first
-      const allTransactions = [...transactions, ...transferTransactions].sort(
+      const allTransactions = [...(transactions || []), ...transferTransactions].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
 
@@ -152,17 +152,19 @@ export const getTransactions = async ({
 }: getTransactionsProps) => {
   let hasMore = true;
   let transactions: any = [];
+  let cursor: string | undefined = undefined;
 
   try {
     // Iterate through each page of new transaction updates for item
     while (hasMore) {
       const response = await plaidClient.transactionsSync({
         access_token: accessToken,
+        cursor: cursor,
       });
 
       const data = response.data;
 
-      transactions = response.data.added.map((transaction) => ({
+      const newTransactions = response.data.added.map((transaction) => ({
         id: transaction.transaction_id,
         name: transaction.name,
         paymentChannel: transaction.payment_channel,
@@ -170,12 +172,15 @@ export const getTransactions = async ({
         accountId: transaction.account_id,
         amount: transaction.amount,
         pending: transaction.pending,
-        category: transaction.category ? transaction.category[0] : "",
+        category: transaction.payment_channel === 'online' ? 'Processing' : (transaction.personal_finance_category ? transaction.personal_finance_category.primary : transaction.category ? transaction.category[0] : "Transfer"),
         date: transaction.date,
         image: transaction.logo_url,
       }));
 
+      transactions = [...transactions, ...newTransactions];
+
       hasMore = data.has_more;
+      cursor = data.next_cursor;
     }
 
     return parseStringify(transactions);
